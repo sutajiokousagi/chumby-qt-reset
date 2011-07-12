@@ -59,7 +59,7 @@ class QWSChumbyIrKbPrivate : public QObject
 {
     Q_OBJECT
 public:
-    QWSChumbyIrKbPrivate(QWSLinuxInputKeyboardHandler *, const QString &);
+    QWSChumbyIrKbPrivate(QWSChumbyIrKbHandler *, const QString &);
     ~QWSChumbyIrKbPrivate();
 
 private:
@@ -69,30 +69,30 @@ private Q_SLOTS:
     void readKeycode();
 
 private:
-    QWSLinuxInputKeyboardHandler *m_handler;
+    QWSChumbyIrKbHandler *m_handler;
     int                           m_fd;
     int                           m_tty_fd;
     struct termios                m_tty_attr;
     int                           m_orig_kbmode;
 };
 
-QWSLinuxInputKeyboardHandler::QWSLinuxInputKeyboardHandler(const QString &device)
+QWSChumbyIrKbHandler::QWSChumbyIrKbHandler(const QString &device)
     : QWSKeyboardHandler(device)
 {
     d = new QWSChumbyIrKbPrivate(this, device);
 }
 
-QWSLinuxInputKeyboardHandler::~QWSLinuxInputKeyboardHandler()
+QWSChumbyIrKbHandler::~QWSChumbyIrKbHandler()
 {
     delete d;
 }
 
-bool QWSLinuxInputKeyboardHandler::filterInputEvent(quint16 &, qint32 &)
+bool QWSChumbyIrKbHandler::filterInputEvent(quint16 &, qint32 &)
 {
     return false;
 }
 
-QWSChumbyIrKbPrivate::QWSChumbyIrKbPrivate(QWSLinuxInputKeyboardHandler *h, const QString &device)
+QWSChumbyIrKbPrivate::QWSChumbyIrKbPrivate(QWSChumbyIrKbHandler *h, const QString &device)
     : m_handler(h), m_fd(-1), m_tty_fd(-1), m_orig_kbmode(K_XLATE)
 {
     setObjectName(QLatin1String("chumby IR-to-Keyboard Handler"));
@@ -122,6 +122,7 @@ QWSChumbyIrKbPrivate::QWSChumbyIrKbPrivate(QWSLinuxInputKeyboardHandler *h, cons
         notifier = new QSocketNotifier(m_fd, QSocketNotifier::Read, this);
         connect(notifier, SIGNAL(activated(int)), this, SLOT(readKeycode()));
 
+	/*
         // play nice in case we are started from a shell (e.g. for debugging)
         m_tty_fd = isatty(0) ? 0 : -1;
 
@@ -151,6 +152,7 @@ QWSChumbyIrKbPrivate::QWSChumbyIrKbPrivate(QWSLinuxInputKeyboardHandler *h, cons
             cfsetospeed(&termdata, 9600);
             tcsetattr(m_tty_fd, TCSANOW, &termdata);
         }
+	*/
     } else {
         qWarning("Cannot open keyboard input device '%s': %s", qPrintable(dev), strerror(errno));
         return;
@@ -184,7 +186,6 @@ void QWSChumbyIrKbPrivate::readKeycode()
     int n = 0;
 
     forever {
-        qWarning("Reading");
         n = QT_READ(m_fd, reinterpret_cast<char *>(buffer) + n, sizeof(buffer) - n);
 
         if (n == 0) {

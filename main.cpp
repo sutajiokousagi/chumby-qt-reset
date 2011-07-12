@@ -40,39 +40,39 @@
 ****************************************************************************/
 
 #include <qkbddriverplugin_qws.h>
-#include <qkbdlinuxinput_qws.h>
+#include <qchumbyirkb_qws.h>
 #include <stdio.h>
 QT_BEGIN_NAMESPACE
 
-class QLinuxInputKbdDriver : public QKbdDriverPlugin
+class QChumbyIrKbDriver : public QKbdDriverPlugin
 {
 public:
-    QLinuxInputKbdDriver();
+    QChumbyIrKbDriver();
 
     QStringList keys() const;
     QWSKeyboardHandler* create(const QString &driver, const QString &device);
 };
 
-QLinuxInputKbdDriver::QLinuxInputKbdDriver()
+QChumbyIrKbDriver::QChumbyIrKbDriver()
     : QKbdDriverPlugin()
 {
-	fprintf(stderr, "Initialized QKbdDriver\n");
+	fprintf(stderr, "Initialized chumby IR keyboard driver\n");
 }
 
-QStringList QLinuxInputKbdDriver::keys() const
+QStringList QChumbyIrKbDriver::keys() const
 {
-    return (QStringList() << QLatin1String("LinuxInput"));
+    return (QStringList() << QLatin1String("chumbyirkb"));
 }
 
-QWSKeyboardHandler* QLinuxInputKbdDriver::create(const QString &driver,
+QWSKeyboardHandler* QChumbyIrKbDriver::create(const QString &driver,
                                                  const QString &device)
 {
     Q_UNUSED(device);
-    if (driver.compare(QLatin1String("LinuxInput"), Qt::CaseInsensitive))
+    if (driver.compare(QLatin1String("chumbyirkb"), Qt::CaseInsensitive))
         return 0;
-    return new QWSLinuxInputKeyboardHandler(device);
+    return new QWSChumbyIrKbHandler(device);
 }
 
-Q_EXPORT_PLUGIN2(qwslinuxinputkbddriver, QLinuxInputKbdDriver)
+Q_EXPORT_PLUGIN2(qwslinuxinputkbddriver, QChumbyIrKbDriver)
 
 QT_END_NAMESPACE

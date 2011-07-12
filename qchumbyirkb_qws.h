@@ -52,11 +52,11 @@ QT_MODULE(Gui)
 
 class QWSChumbyIrKbPrivate;
 
-class QWSLinuxInputKeyboardHandler : public QWSKeyboardHandler
+class QWSChumbyIrKbHandler : public QWSKeyboardHandler
 {
 public:
-    QWSLinuxInputKeyboardHandler(const QString&);
-    virtual ~QWSLinuxInputKeyboardHandler();
+    QWSChumbyIrKbHandler(const QString&);
+    virtual ~QWSChumbyIrKbHandler();
 
     virtual bool filterInputEvent(quint16 &input_code, qint32 &input_value);
 
