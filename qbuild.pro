@@ -1,6 +1,6 @@
 requires(qws)
 TEMPLATE=plugin
-PLUGIN_FOR=qt
+PLUGIN_FOR=qte
 PLUGIN_TYPE=kbddrivers
 
 TARGET=examplekbdhandler
