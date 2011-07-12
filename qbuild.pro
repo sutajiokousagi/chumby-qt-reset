@@ -1,4 +1,4 @@
-TARGET = qlinuxinputkbddriver
+TARGET = qchumbyirkbddriver
 include(qpluginbase.pri)
 
 QTDIR_build:DESTDIR = $$QT_BUILD_TREE/plugins/kbddrivers
