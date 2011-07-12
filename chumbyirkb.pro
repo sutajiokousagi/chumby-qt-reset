@@ -5,10 +5,8 @@ QTDIR_build:DESTDIR = $$QT_BUILD_TREE/plugins/kbddrivers
 target.path = $$[QT_INSTALL_PLUGINS]/kbddrivers
 INSTALLS += target
 
-DEFINES += QT_QWS_KBD_LINUXINPUT
-
-HEADERS	= qkbdlinuxinput_qws.h
+HEADERS	= qchumbyirkb_qws.h
 
 SOURCES	= main.cpp \
-	qkbdlinuxinput_qws.cpp
+	qchumbyirkb_qws.cpp
 

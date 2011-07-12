@@ -39,15 +39,12 @@
 **
 ****************************************************************************/
 
-#include "qkbdlinuxinput_qws.h"
-
-#ifndef QT_NO_QWS_KEYBOARD
+#include "qchumbyirkb_qws.h"
 
 #include <QSocketNotifier>
 #include <QStringList>
 
 #include <qplatformdefs.h>
-#include <private/qcore_unix_p.h> // overrides QT_OPEN
 
 #include <errno.h>
 #include <termios.h>
@@ -58,12 +55,12 @@
 QT_BEGIN_NAMESPACE
 
 
-class QWSLinuxInputKbPrivate : public QObject
+class QWSChumbyIrKbPrivate : public QObject
 {
     Q_OBJECT
 public:
-    QWSLinuxInputKbPrivate(QWSLinuxInputKeyboardHandler *, const QString &);
-    ~QWSLinuxInputKbPrivate();
+    QWSChumbyIrKbPrivate(QWSLinuxInputKeyboardHandler *, const QString &);
+    ~QWSChumbyIrKbPrivate();
 
 private:
     void switchLed(int, bool);
@@ -82,7 +79,7 @@ private:
 QWSLinuxInputKeyboardHandler::QWSLinuxInputKeyboardHandler(const QString &device)
     : QWSKeyboardHandler(device)
 {
-    d = new QWSLinuxInputKbPrivate(this, device);
+    d = new QWSChumbyIrKbPrivate(this, device);
 }
 
 QWSLinuxInputKeyboardHandler::~QWSLinuxInputKeyboardHandler()
@@ -95,10 +92,10 @@ bool QWSLinuxInputKeyboardHandler::filterInputEvent(quint16 &, qint32 &)
     return false;
 }
 
-QWSLinuxInputKbPrivate::QWSLinuxInputKbPrivate(QWSLinuxInputKeyboardHandler *h, const QString &device)
+QWSChumbyIrKbPrivate::QWSChumbyIrKbPrivate(QWSLinuxInputKeyboardHandler *h, const QString &device)
     : m_handler(h), m_fd(-1), m_tty_fd(-1), m_orig_kbmode(K_XLATE)
 {
-    setObjectName(QLatin1String("LinuxInputSubsystem Keyboard Handler"));
+    setObjectName(QLatin1String("chumby IR-to-Keyboard Handler"));
 
     QString dev = QLatin1String("/dev/input/event1");
     int repeat_delay = -1;
@@ -160,7 +157,7 @@ QWSLinuxInputKbPrivate::QWSLinuxInputKbPrivate(QWSLinuxInputKeyboardHandler *h, 
     }
 }
 
-QWSLinuxInputKbPrivate::~QWSLinuxInputKbPrivate()
+QWSChumbyIrKbPrivate::~QWSChumbyIrKbPrivate()
 {
     if (m_tty_fd >= 0) {
         ::ioctl(m_tty_fd, KDSKBMODE, m_orig_kbmode);
@@ -170,7 +167,7 @@ QWSLinuxInputKbPrivate::~QWSLinuxInputKbPrivate()
         QT_CLOSE(m_fd);
 }
 
-void QWSLinuxInputKbPrivate::switchLed(int led, bool state)
+void QWSChumbyIrKbPrivate::switchLed(int led, bool state)
 {
     struct ::input_event led_ie;
     ::gettimeofday(&led_ie.time, 0);
@@ -181,7 +178,7 @@ void QWSLinuxInputKbPrivate::switchLed(int led, bool state)
     QT_WRITE(m_fd, &led_ie, sizeof(led_ie));
 }
 
-void QWSLinuxInputKbPrivate::readKeycode()
+void QWSChumbyIrKbPrivate::readKeycode()
 {
     struct ::input_event buffer[32];
     int n = 0;
@@ -244,6 +241,4 @@ void QWSLinuxInputKbPrivate::readKeycode()
 
 QT_END_NAMESPACE
 
-#include "qkbdlinuxinput_qws.moc"
-
-#endif // QT_NO_QWS_KEYBOARD
+#include "qchumbyirkb_qws.moc"

@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QKBDLINUXINPUT_QWS_H
-#define QKBDLINUXINPUT_QWS_H
+#ifndef QCHUMBYIRKB_QWS_H
+#define QCHUMBYIRKB_QWS_H
 
 #include <QtGui/qkbd_qws.h>
 
@@ -50,11 +50,7 @@ QT_BEGIN_NAMESPACE
 
 QT_MODULE(Gui)
 
-#ifndef QT_NO_QWS_KEYBOARD
-
-#ifndef QT_NO_QWS_KBD_LINUXINPUT
-
-class QWSLinuxInputKbPrivate;
+class QWSChumbyIrKbPrivate;
 
 class QWSLinuxInputKeyboardHandler : public QWSKeyboardHandler
 {
@@ -65,15 +61,11 @@ public:
     virtual bool filterInputEvent(quint16 &input_code, qint32 &input_value);
 
 private:
-    QWSLinuxInputKbPrivate *d;
+    QWSChumbyIrKbPrivate *d;
 };
-
-#endif // QT_NO_QWS_KBD_LINUXINPUT
-
-#endif // QT_NO_QWS_KEYBOARD
 
 QT_END_NAMESPACE
 
 QT_END_HEADER
 
-#endif // QKBDLINUXINPUT_QWS_H
+#endif // QCHUMBYIRKB_QWS_H
