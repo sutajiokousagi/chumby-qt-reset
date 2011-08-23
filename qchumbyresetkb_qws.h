@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QCHUMBYIRKB_QWS_H
-#define QCHUMBYIRKB_QWS_H
+#ifndef QCHUMBYRESETKB_QWS_H
+#define QCHUMBYRESETKB_QWS_H
 
 #include <QtGui/qkbd_qws.h>
 
@@ -50,22 +50,22 @@ QT_BEGIN_NAMESPACE
 
 QT_MODULE(Gui)
 
-class QWSChumbyIrKbPrivate;
+class QWSChumbyResetKbPrivate;
 
-class QWSChumbyIrKbHandler : public QWSKeyboardHandler
+class QWSChumbyResetKbHandler : public QWSKeyboardHandler
 {
 public:
-    QWSChumbyIrKbHandler(const QString&);
-    virtual ~QWSChumbyIrKbHandler();
+    QWSChumbyResetKbHandler(const QString&);
+    virtual ~QWSChumbyResetKbHandler();
 
     virtual bool filterInputEvent(quint16 &input_code, qint32 &input_value);
 
 private:
-    QWSChumbyIrKbPrivate *d;
+    QWSChumbyResetKbPrivate *d;
 };
 
 QT_END_NAMESPACE
 
 QT_END_HEADER
 
-#endif // QCHUMBYIRKB_QWS_H
+#endif // QCHUMBYRESETKB_QWS_H
