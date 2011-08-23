@@ -39,7 +39,9 @@
 **
 ****************************************************************************/
 
-#include "qchumbyirkb_qws.h"
+#define PRESSED_KEY Qt::Key_HomePage
+
+#include "qchumbyresetkb_qws.h"
 
 #include <QSocketNotifier>
 #include <QStringList>
@@ -55,49 +57,46 @@
 QT_BEGIN_NAMESPACE
 
 
-class QWSChumbyIrKbPrivate : public QObject
+class QWSChumbyResetKbPrivate : public QObject
 {
     Q_OBJECT
 public:
-    QWSChumbyIrKbPrivate(QWSChumbyIrKbHandler *, const QString &);
-    ~QWSChumbyIrKbPrivate();
-
-private:
-    void switchLed(int, bool);
+    QWSChumbyResetKbPrivate(QWSChumbyResetKbHandler *, const QString &);
+    ~QWSChumbyResetKbPrivate();
 
 private Q_SLOTS:
     void readKeycode();
 
 private:
-    QWSChumbyIrKbHandler *m_handler;
+    QWSChumbyResetKbHandler *m_handler;
     int                           m_fd;
     int                           m_tty_fd;
     struct termios                m_tty_attr;
     int                           m_orig_kbmode;
 };
 
-QWSChumbyIrKbHandler::QWSChumbyIrKbHandler(const QString &device)
+QWSChumbyResetKbHandler::QWSChumbyResetKbHandler(const QString &device)
     : QWSKeyboardHandler(device)
 {
-    d = new QWSChumbyIrKbPrivate(this, device);
+    d = new QWSChumbyResetKbPrivate(this, device);
 }
 
-QWSChumbyIrKbHandler::~QWSChumbyIrKbHandler()
+QWSChumbyResetKbHandler::~QWSChumbyResetKbHandler()
 {
     delete d;
 }
 
-bool QWSChumbyIrKbHandler::filterInputEvent(quint16 &, qint32 &)
+bool QWSChumbyResetKbHandler::filterInputEvent(quint16 &, qint32 &)
 {
     return false;
 }
 
-QWSChumbyIrKbPrivate::QWSChumbyIrKbPrivate(QWSChumbyIrKbHandler *h, const QString &device)
+QWSChumbyResetKbPrivate::QWSChumbyResetKbPrivate(QWSChumbyResetKbHandler *h, const QString &device)
     : m_handler(h), m_fd(-1), m_tty_fd(-1), m_orig_kbmode(K_XLATE)
 {
-    setObjectName(QLatin1String("chumby IR-to-Keyboard Handler"));
+    setObjectName(QLatin1String("chumby Reset-button-to-Keyboard Handler"));
 
-    QString dev = QLatin1String("/dev/input/event1");
+    QString dev = QLatin1String("/dev/input/event0");
     int repeat_delay = -1;
     int repeat_rate = -1;
 
@@ -128,7 +127,7 @@ QWSChumbyIrKbPrivate::QWSChumbyIrKbPrivate(QWSChumbyIrKbHandler *h, const QStrin
     }
 }
 
-QWSChumbyIrKbPrivate::~QWSChumbyIrKbPrivate()
+QWSChumbyResetKbPrivate::~QWSChumbyResetKbPrivate()
 {
     if (m_tty_fd >= 0) {
         ::ioctl(m_tty_fd, KDSKBMODE, m_orig_kbmode);
@@ -138,18 +137,7 @@ QWSChumbyIrKbPrivate::~QWSChumbyIrKbPrivate()
         QT_CLOSE(m_fd);
 }
 
-void QWSChumbyIrKbPrivate::switchLed(int led, bool state)
-{
-    struct ::input_event led_ie;
-    ::gettimeofday(&led_ie.time, 0);
-    led_ie.type = EV_LED;
-    led_ie.code = led;
-    led_ie.value = state;
-
-    QT_WRITE(m_fd, &led_ie, sizeof(led_ie));
-}
-
-void QWSChumbyIrKbPrivate::readKeycode()
+void QWSChumbyResetKbPrivate::readKeycode()
 {
     struct ::input_event buffer[32];
     int n = 0;
@@ -180,35 +168,18 @@ void QWSChumbyIrKbPrivate::readKeycode()
         quint16 code = buffer[i].code;
         qint32 value = buffer[i].value;
 
+        code = 
+
         if (m_handler->filterInputEvent(code, value))
             continue;
 
         QWSKeyboardHandler::KeycodeAction ka;
-        ka = m_handler->processKeycode(code, value != 0, value == 2);
 
-        switch (ka) {
-        case QWSKeyboardHandler::CapsLockOn:
-        case QWSKeyboardHandler::CapsLockOff:
-            switchLed(LED_CAPSL, ka == QWSKeyboardHandler::CapsLockOn);
-            break;
-
-        case QWSKeyboardHandler::NumLockOn:
-        case QWSKeyboardHandler::NumLockOff:
-            switchLed(LED_NUML, ka == QWSKeyboardHandler::NumLockOn);
-            break;
-
-        case QWSKeyboardHandler::ScrollLockOn:
-        case QWSKeyboardHandler::ScrollLockOff:
-            switchLed(LED_SCROLLL, ka == QWSKeyboardHandler::ScrollLockOn);
-            break;
-
-        default:
-            // ignore console switching and reboot
-            break;
-        }
+        /* Bodge the handler so we always send the same key */
+        ka = m_handler->processKeyEvent(code, PRESSED_KEY, Qt::NoModifier, value != 0, value == 2);
     }
 }
 
 QT_END_NAMESPACE
 
-#include "qchumbyirkb_qws.moc"
+#include "qchumbyresetkb_qws.moc"
