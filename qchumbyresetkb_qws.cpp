@@ -171,7 +171,7 @@ void QWSChumbyResetKbPrivate::readKeycode()
         QWSKeyboardHandler::KeycodeAction ka;
 
         /* Bodge the handler so we always send the same key */
-        ka = m_handler->processKeyEvent(code, PRESSED_KEY, Qt::NoModifier, value != 0, value == 2);
+        m_handler->processKeyEvent(code, PRESSED_KEY, Qt::NoModifier, value != 0, value == 2);
     }
 }
 
