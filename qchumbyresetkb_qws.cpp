@@ -168,11 +168,6 @@ void QWSChumbyResetKbPrivate::readKeycode()
         quint16 code = buffer[i].code;
         qint32 value = buffer[i].value;
 
-        code = 
-
-        if (m_handler->filterInputEvent(code, value))
-            continue;
-
         QWSKeyboardHandler::KeycodeAction ka;
 
         /* Bodge the handler so we always send the same key */
